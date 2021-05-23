@@ -104,7 +104,7 @@ struct TreapArray<T>: CustomStringConvertible, Collection, Sequence,
                          right: splitted.1)
         }
         
-        func remove(x:UInt) throws -> TreapNode? {
+        func remove(x:UInt) throws -> (TreapNode?, TreapNode?) {
             let splitRes = split(no: x)
             
             if splitRes.1 == nil {
@@ -112,7 +112,7 @@ struct TreapArray<T>: CustomStringConvertible, Collection, Sequence,
             }
         
             let splittedSecond = splitRes.1!.split(no: 1)
-            return TreapArray<T>.TreapNode.merge(left: splitRes.0, right: splittedSecond.1)
+            return (TreapArray<T>.TreapNode.merge(left: splitRes.0, right: splittedSecond.1), splittedSecond.0)
         }
         
         func get(x:UInt) -> TreapNode? {
@@ -194,7 +194,7 @@ struct TreapArray<T>: CustomStringConvertible, Collection, Sequence,
     }
     
     public var endIndex: Int {
-        Int(size) - 1
+        Int(size)
     }
     
     var array: [T] {
@@ -259,18 +259,50 @@ struct TreapArray<T>: CustomStringConvertible, Collection, Sequence,
         size += 1
     }
     
-    mutating public func remove(x: UInt) {
+    @discardableResult mutating func remove(at i: Int) -> T {
         copyOnWrite()
-        if (x > size) {
-            fatalError("Index \(x)/ out of range in structure of size \(size)")
+        return remove(at: UInt(i))
+    }
+    
+    mutating func removeAll(keepingCapacity keepCapacity: Bool) {
+        head = nil
+    }
+    
+    mutating func removeAll(where shouldBeRemoved: (T) throws -> Bool) rethrows {
+        for i in (0..<size).reversed() {
+            if try shouldBeRemoved(self[i]) {
+                remove(at: i)
+            }
+        }
+    }
+    
+    
+    
+    mutating func removeFirst() -> T {
+        remove(at: 0)
+    }
+    
+    mutating func removeFirst(_ k: Int) {
+        for _ in (0..<k) {
+            remove(at: 0)
+        }
+    }
+    
+    @discardableResult mutating public func remove(at i: UInt) -> T {
+        copyOnWrite()
+        if (i > size) {
+            fatalError("Index \(i)/ out of range in structure of size \(size)")
         }
         
-        if let newHead = try? head?.remove(x: x) {
-            head = newHead
-        } else {
-            fatalError("Index \(x)/ out of range in structure of size \(size)")
+        if let newHead = try? head?.remove(x: i) {
+            if newHead.0 == nil || newHead.1 == nil {
+                fatalError("Index \(i)/ out of range in structure of size \(size)")
+            }
+            head = newHead.0
+            size -= 1
+            return newHead.1!.key!
         }
-        size -= 1
+        fatalError("Index \(i)/ out of range in structure of size \(size)")
     }
     
     public subscript(_ x: Int) -> T {
@@ -303,16 +335,50 @@ struct TreapArray<T>: CustomStringConvertible, Collection, Sequence,
         }
     }
     
-    mutating public func insert(_ value: T, at x: UInt) {
+    mutating func insert(_ newElement: T, at i: Int) {
+        insert(newElement, at: UInt(i))
+    }
+    
+    mutating public func insert(_ newElement: T, at i: UInt) {
         copyOnWrite()
-        if (x > size) {
-            fatalError("Index \(x)/ out of range in structure of size \(size)")
+        if (i > size) {
+            fatalError("Index \(i)/ out of range in structure of size \(size)")
         }
         if head == nil {
-            head = TreapNode(key: value)
+            head = TreapNode(key: newElement)
         } else {
-            head = head!.insert(x: x, key: value)
+            head = head!.insert(x: i, key: newElement)
         }
         size += 1
     }
+
+    
+    mutating public func insert<S>(contentsOf newElements: S, at i: Int) where S : Collection, T == S.Element {
+        copyOnWrite()
+        var pos = i
+        for elem in newElements{
+            self.insert(elem, at: pos)
+            pos += 1
+        }
+    }
+    
+    init<S>(_ elements: S) where S : Sequence, T == S.Element {
+        for i in elements {
+            append(i)
+        }
+    }
+    
+    init(repeating repeatedValue: T, count: Int) {
+        for _ in 0..<count {
+            append(repeatedValue)
+        }
+    }
+    
+    mutating func append<S>(contentsOf newElements: S) where S : Sequence, T == S.Element {
+        copyOnWrite()
+        for elem in newElements {
+            append(elem)
+        }
+    }
+
 }
