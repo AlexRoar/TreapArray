@@ -11,12 +11,12 @@ struct TreapArray<T>: CustomStringConvertible, Collection, Sequence,
     private class Identity {}
     
     class TreapNode: CustomStringConvertible {
-        var key:T? = nil
+        var key:T?
         var priority:UInt = 0
         var depth:UInt = 1
         
-        var left:TreapNode? = nil
-        var right:TreapNode? = nil
+        var left:TreapNode?
+        var right:TreapNode?
         
         init(key: T?, left: TreapNode? = nil, right: TreapNode? = nil) {
             self.key = key
@@ -48,13 +48,13 @@ struct TreapArray<T>: CustomStringConvertible, Collection, Sequence,
             }
 
             if left!.priority > right!.priority {
-                left!.right = merge(left: left!.right, right: right);
-                left!.update();
-                return left;
+                left!.right = merge(left: left!.right, right: right)
+                left!.update()
+                return left
             } else {
-                right!.left = merge(left: left, right: right!.left);
-                right!.update();
-                return right;
+                right!.left = merge(left: left, right: right!.left)
+                right!.update()
+                return right
             }
         }
         
@@ -126,7 +126,7 @@ struct TreapArray<T>: CustomStringConvertible, Collection, Sequence,
                 if left == nil {
                     return nil
                 }
-                return left!.get(x: x);
+                return left!.get(x: x)
             }
             return self
         }
