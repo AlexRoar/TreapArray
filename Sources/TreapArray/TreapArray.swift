@@ -265,10 +265,13 @@ struct TreapArray<T>: CustomStringConvertible, Collection, Sequence,
     }
     
     mutating func removeAll(keepingCapacity keepCapacity: Bool) {
+        copyOnWrite()
         head = nil
+        size = 0
     }
     
     mutating func removeAll(where shouldBeRemoved: (T) throws -> Bool) rethrows {
+        copyOnWrite()
         for i in (0..<size).reversed() {
             if try shouldBeRemoved(self[i]) {
                 remove(at: i)
@@ -277,12 +280,13 @@ struct TreapArray<T>: CustomStringConvertible, Collection, Sequence,
     }
     
     
-    
     mutating func removeFirst() -> T {
-        remove(at: 0)
+        copyOnWrite()
+        return remove(at: 0)
     }
     
     mutating func removeFirst(_ k: Int) {
+        copyOnWrite()
         for _ in (0..<k) {
             remove(at: 0)
         }
@@ -329,13 +333,14 @@ struct TreapArray<T>: CustomStringConvertible, Collection, Sequence,
                 return
             }
             if head == nil || x >= size {
-                
+                fatalError("Index \(x)/ out of range in structure of size \(size)")
             }
             head!.get(x: x)!.key = value
         }
     }
     
     mutating func insert(_ newElement: T, at i: Int) {
+        copyOnWrite()
         insert(newElement, at: UInt(i))
     }
     
@@ -380,5 +385,11 @@ struct TreapArray<T>: CustomStringConvertible, Collection, Sequence,
             append(elem)
         }
     }
-
+    
+    mutating func removeSubrange(_ bounds: Range<Int>) {
+        copyOnWrite()
+        for i in bounds.reversed() {
+            remove(at: i)
+        }
+    }
 }
