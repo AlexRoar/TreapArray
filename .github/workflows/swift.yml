@@ -25,7 +25,7 @@ jobs:
         # Repository upload token - get it from codecov.io. Required only for private repositories
         token: # optional
         # Comma-separated list of files to upload
-        files: ./Sources/TreapArray/TreapArray.swift
+        files: 
         # Directory to search for coverage reports.
         directory: ./.build/debug/codecov/
         # Flag upload to group coverage metrics (e.g. unittests | integration | ui,chrome)
