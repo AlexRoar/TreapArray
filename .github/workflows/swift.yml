@@ -16,7 +16,7 @@ jobs:
     - name: Build
       run: swift build -v
     - name: Run tests
-      run: swift test -v
+      run: swift test -v --enable-code-coverage
     - name: Codecov
       # You may pin to the exact commit or the version.
       # uses: codecov/codecov-action@a1ed4b322b4b38cb846afb5a0ebfa17086917d27
