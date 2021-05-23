@@ -1,11 +1,14 @@
-struct TreapArray<T>: CustomStringConvertible, Collection, Sequence {
+struct TreapArray<T>: CustomStringConvertible, Collection, Sequence,
+    RangeReplaceableCollection, MutableCollection,
+    ExpressibleByArrayLiteral, CustomDebugStringConvertible {
+    
+    typealias ArrayLiteralElement = T
+    
     enum TreapArrayError: Error {
         case indexNotFound(x: UInt)
     }
     
-    private class Identity {
-        
-    }
+    private class Identity {}
     
     class TreapNode: CustomStringConvertible {
         var key:T? = nil
@@ -176,6 +179,12 @@ struct TreapArray<T>: CustomStringConvertible, Collection, Sequence {
         }
     }
     
+    init(arrayLiteral elements: T...) {
+        for i in elements{
+            append(i)
+        }
+    }
+    
     public func index(after i: Int) -> Int {
         i + 1
     }
@@ -207,7 +216,7 @@ struct TreapArray<T>: CustomStringConvertible, Collection, Sequence {
         return out
     }
     
-    public var descriptionTree: String {
+    public var debugDescription: String {
         let mirror = Mirror(reflecting: self)
         var out:String = "\(mirror.subjectType) {\n"
         out += head?.description ?? "<Empty>"
@@ -261,7 +270,6 @@ struct TreapArray<T>: CustomStringConvertible, Collection, Sequence {
         } else {
             fatalError("Index \(x)/ out of range in structure of size \(size)")
         }
-    
         size -= 1
     }
     
