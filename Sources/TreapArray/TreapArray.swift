@@ -59,7 +59,7 @@ struct TreapArray<T>: CustomStringConvertible, Collection, Sequence,
         }
         
         func split(no:UInt) -> (TreapNode?, TreapNode?) {
-            var newTree:TreapNode? = nil
+            var newTree:TreapNode?
             let curKey = leftDepth
             
             var ret:(left: TreapNode?, right: TreapNode?) = (nil, nil)
