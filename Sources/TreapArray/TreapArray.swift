@@ -165,7 +165,7 @@ struct TreapArray<T>: CustomStringConvertible, Collection, Sequence,
         }
     }
     
-    private var head: TreapNode? = nil
+    private var head: TreapNode?
     private var size: UInt = 0
     private var id = Identity()
     
@@ -266,7 +266,6 @@ struct TreapArray<T>: CustomStringConvertible, Collection, Sequence,
     
     mutating func removeAll(keepingCapacity keepCapacity: Bool) {
         copyOnWrite()
-        head = nil
         size = 0
     }
     
